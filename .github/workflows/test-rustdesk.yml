@@ -1,0 +1,20 @@
+name: Test RustDesk desde GitHub
+on:
+  workflow_dispatch:
+jobs:
+  test-rdcli:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Descargar rdcli
+        run: |
+          curl -sL -o rdcli https://github.com/4nkitd/rustdesk-cli/releases/download/v0.2.0/rdcli-linux-amd64
+          chmod +x rdcli
+          ./rdcli version
+          ./rdcli auth status || true
+      - name: Ping a Chuy (1069451371)
+        run: |
+          ./rdcli ping 1069451371; echo "ping exit: $?"
+      - name: Doctor con relay
+        run: |
+          timeout 30 ./rdcli --relay --timeout 15s doctor 1069451371 --json || true
